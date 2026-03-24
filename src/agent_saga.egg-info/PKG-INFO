@@ -1,0 +1,24 @@
+Metadata-Version: 2.4
+Name: agent-saga
+Version: 1.0.0
+Summary: Distributed saga pattern for multi-agent systems — automatic rollback without a global coordinator
+Author-email: Darshankumar Joshi <darshjme@gmail.com>
+License: MIT
+Project-URL: Homepage, https://github.com/darshjme-codes/agent-saga
+Project-URL: Repository, https://github.com/darshjme-codes/agent-saga
+Project-URL: Bug Tracker, https://github.com/darshjme-codes/agent-saga/issues
+Keywords: saga,distributed,agents,transactions,rollback,compensating-actions
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: System :: Distributed Computing
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-cov; extra == "dev"
