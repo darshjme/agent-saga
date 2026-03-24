@@ -4,20 +4,15 @@
 
 # agent-saga
 
-**Distributed saga pattern for LLM agents. Zero external dependencies.**
+**Distributed saga pattern for multi-agent systems — automatic rollback without a global coordinator**
 
-[![PyPI](https://img.shields.io/pypi/v/agent-saga?color=blue)](https://pypi.org/project/agent-saga/)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Zero deps](https://img.shields.io/badge/dependencies-zero-brightgreen)](pyproject.toml)
+[![PyPI version](https://img.shields.io/pypi/v/agent-saga?color=purple&style=flat-square)](https://pypi.org/project/agent-saga/) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square)](https://python.org) [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE) [![Tests](https://img.shields.io/badge/tests-passing-brightgreen?style=flat-square)](#)
 
 ---
 
 ## The Problem
 
-Production LLM agents fail silently. Without distributed saga pattern, you get undefined behaviour at scale — race conditions, lost state, cascading failures, and no way to debug what went wrong.
-
-`agent-saga` gives you a production-ready distributed saga pattern primitive with a clean API, tested edge cases, and zero configuration.
+Without the saga pattern, a distributed transaction that fails halfway leaves the system in an inconsistent state. Partial writes with no compensating logic produce data corruption that is exponentially harder to clean up than to prevent.
 
 ## Installation
 
@@ -25,88 +20,94 @@ Production LLM agents fail silently. Without distributed saga pattern, you get u
 pip install agent-saga
 ```
 
-Or from source:
-
-```bash
-git clone https://github.com/darshjme/agent-saga.git
-cd agent-saga
-pip install -e .
-```
-
 ## Quick Start
 
 ```python
-from agent_saga import *  # see API reference below
+from agent_saga import SagaLog, SagaResult, Saga
 
-# See examples/ directory for complete working examples
+# Initialise
+instance = SagaLog(name="my_agent")
+
+# Use
+# see API reference below
+print(result)
 ```
 
 ## API Reference
 
-The main classes and functions are defined in `agent_saga/__init__.py`.
+### `SagaLog`
 
-Key exports: `Automatic rollback · compensating actions · multi-agent sagas`
+```python
+class SagaLog:
+    """Records saga lifecycle events.
+    def __init__(self) -> None:
+    def record(
+    def events(self) -> list[dict]:
+        """Return all recorded events (read-only copy)."""
+    def for_saga(self, saga_name: str) -> list[dict]:
+        """Return only the events that belong to *saga_name*."""
+```
 
-All classes follow a consistent interface:
-- Instantiate with sensible defaults
-- Compose with other arsenal libraries
-- Zero external dependencies required
+### `SagaResult`
 
-See the source code and `tests/` directory for verified usage examples.
+```python
+class SagaResult:
+    """Holds the outcome of a Saga execution."""
+    def to_dict(self) -> dict:
+```
+
+### `Saga`
+
+```python
+class SagaLog:
+    """Records saga lifecycle events.
+    def __init__(self) -> None:
+    def record(
+    def events(self) -> list[dict]:
+        """Return all recorded events (read-only copy)."""
+    def for_saga(self, saga_name: str) -> list[dict]:
+        """Return only the events that belong to *saga_name*."""
+```
+
 
 ## How It Works
 
+### Flow
+
 ```mermaid
 flowchart LR
-    A[Agent Task] --> B[agent-saga]
-    B --> C{Decision}
-    C -->|success| D[✅ Result]
-    C -->|failure| E[⚠️ Handle]
-    E --> B
-
-    style B fill:#161b22,stroke:#3fb950,stroke-width:2,color:#3fb950
-    style D fill:#1a3320,stroke:#238636,color:#3fb950
-    style E fill:#3d1a1a,stroke:#f85149,color:#f85149
+    A[User Code] -->|create| B[SagaLog]
+    B -->|configure| C[SagaResult]
+    C -->|execute| D{Success?}
+    D -->|yes| E[Return Result]
+    D -->|no| F[Error Handler]
+    F --> G[Fallback / Retry]
+    G --> C
 ```
+
+### Sequence
 
 ```mermaid
 sequenceDiagram
-    participant Agent
-    participant AgentSaga as agent-saga
-    participant Output
+    participant App
+    participant SagaLog
+    participant SagaResult
 
-    Agent->>AgentSaga: initialize()
-    AgentSaga-->>Agent: ready
-
-    loop Agent Run
-        Agent->>AgentSaga: process(input)
-        AgentSaga-->>Agent: result
-    end
-
-    Agent->>Output: deliver(result)
+    App->>+SagaLog: initialise()
+    SagaLog->>+SagaResult: configure()
+    SagaResult-->>-SagaLog: ready
+    App->>+SagaLog: run(context)
+    SagaLog->>+SagaResult: execute(context)
+    SagaResult-->>-SagaLog: result
+    SagaLog-->>-App: WorkflowResult
 ```
 
 ## Philosophy
 
-When a Vedic ritual failed mid-performance, specific counter-rituals restored order. agent-saga is that restoration.
+> The *Ramayana* is itself a saga of compensating transactions — every exile balanced by a return.
 
 ---
 
-## Part of the Arsenal
-
-`agent-saga` is one of six production libraries for LLM agents:
-
-| Library | Purpose |
-|---------|---------|
-| [herald](https://github.com/darshjme/herald) | Semantic task routing |
-| [engram](https://github.com/darshjme/engram) | Agent memory |
-| [sentinel](https://github.com/darshjme/sentinel) | ReAct loop guards |
-| [verdict](https://github.com/darshjme/verdict) | Agent evaluation |
-| [agent-guardrails](https://github.com/darshjme/agent-guardrails) | Output validation |
-| [agent-observability](https://github.com/darshjme/agent-observability) | Tracing & metrics |
-
-→ [arsenal](https://github.com/darshjme/arsenal) — the complete stack
-
----
+*Part of the [arsenal](https://github.com/darshjme/arsenal) — production stack for LLM agents.*
 
 *Built by [Darshankumar Joshi](https://github.com/darshjme), Gujarat, India.*
