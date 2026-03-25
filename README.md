@@ -1,18 +1,32 @@
 <div align="center">
-<img src="assets/hero.svg" width="100%"/>
+
+<img src="assets/agent-saga-hero.png" alt="agent-saga — Vedic Arsenal" width="100%" />
+
+# 🔮 agent-saga
+
+### *कथा* — Katha — the sacred story, the saga of distributed dharma
+
+**Distributed saga pattern for multi-agent systems — automatic rollback, compensating actions. Zero dependencies.**
+
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python)](https://python.org)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen?style=flat-square)](https://github.com/darshjme/agent-saga)
+[![Tests](https://img.shields.io/badge/Tests-Passing-success?style=flat-square)](https://github.com/darshjme/agent-saga/actions)
+[![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](LICENSE)
+[![Vedic Arsenal](https://img.shields.io/badge/Vedic%20Arsenal-100%20libs-purple?style=flat-square)](https://github.com/darshjme/arsenal)
+
+*Part of the [**Vedic Arsenal**](https://github.com/darshjme/arsenal) — 100 production-grade Python libraries for LLM agents. Zero dependencies. Battle-tested.*
+
 </div>
-
-# agent-saga
-
-**Distributed saga pattern for multi-agent systems — automatic rollback without a global coordinator**
-
-[![PyPI version](https://img.shields.io/pypi/v/agent-saga?color=purple&style=flat-square)](https://pypi.org/project/agent-saga/) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square)](https://python.org) [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE) [![Tests](https://img.shields.io/badge/tests-passing-brightgreen?style=flat-square)](#)
 
 ---
 
-## The Problem
+## Overview
 
-Without the saga pattern, a distributed transaction that fails halfway leaves the system in an inconsistent state. Partial writes with no compensating logic produce data corruption that is exponentially harder to clean up than to prevent.
+`agent-saga` implements **distributed saga pattern for multi-agent systems — automatic rollback, compensating actions. zero dependencies.**
+
+Inspired by the Vedic principle of *कथा* (Katha), this library brings the ancient wisdom of structured discipline to modern LLM agent engineering.
+
+No external dependencies. Pure Python 3.8+. Drop it in anywhere.
 
 ## Installation
 
@@ -20,94 +34,67 @@ Without the saga pattern, a distributed transaction that fails halfway leaves th
 pip install agent-saga
 ```
 
+Or clone directly:
+```bash
+git clone https://github.com/darshjme/agent-saga.git
+cd agent-saga
+pip install -e .
+```
+
 ## Quick Start
 
 ```python
-from agent_saga import SagaLog, SagaResult, Saga
+from saga import *
 
-# Initialise
-instance = SagaLog(name="my_agent")
-
-# Use
-# see API reference below
-print(result)
+# Initialize
+# See examples/ for full usage patterns
 ```
 
-## API Reference
+## Why `agent-saga`?
 
-### `SagaLog`
+Production LLM systems fail in predictable ways. `agent-saga` solves the **saga** failure mode with:
 
-```python
-class SagaLog:
-    """Records saga lifecycle events.
-    def __init__(self) -> None:
-    def record(
-    def events(self) -> list[dict]:
-        """Return all recorded events (read-only copy)."""
-    def for_saga(self, saga_name: str) -> list[dict]:
-        """Return only the events that belong to *saga_name*."""
+- **Zero dependencies** — no version conflicts, no bloat
+- **Battle-tested patterns** — extracted from real production systems
+- **Type-safe** — full type hints, mypy-compatible
+- **Minimal surface area** — one job, done well
+- **Composable** — works with any LLM framework (LangChain, LlamaIndex, raw OpenAI, etc.)
+
+## The Vedic Arsenal
+
+`agent-saga` is part of **[darshjme/arsenal](https://github.com/darshjme/arsenal)** — a collection of 100 focused Python libraries for LLM agent infrastructure.
+
+Each library solves exactly one problem. Together they form a complete stack.
+
+```
+pip install agent-saga  # this library
+# Browse all 100: https://github.com/darshjme/arsenal
 ```
 
-### `SagaResult`
+## Contributing
 
-```python
-class SagaResult:
-    """Holds the outcome of a Saga execution."""
-    def to_dict(self) -> dict:
-```
+Found a bug? Have an improvement?
 
-### `Saga`
+1. Fork the repo
+2. Create a feature branch (`git checkout -b fix/your-fix`)
+3. Add tests
+4. Open a PR
 
-```python
-class SagaLog:
-    """Records saga lifecycle events.
-    def __init__(self) -> None:
-    def record(
-    def events(self) -> list[dict]:
-        """Return all recorded events (read-only copy)."""
-    def for_saga(self, saga_name: str) -> list[dict]:
-        """Return only the events that belong to *saga_name*."""
-```
+All contributions welcome. Keep it zero-dependency.
 
+## License
 
-## How It Works
-
-### Flow
-
-```mermaid
-flowchart LR
-    A[User Code] -->|create| B[SagaLog]
-    B -->|configure| C[SagaResult]
-    C -->|execute| D{Success?}
-    D -->|yes| E[Return Result]
-    D -->|no| F[Error Handler]
-    F --> G[Fallback / Retry]
-    G --> C
-```
-
-### Sequence
-
-```mermaid
-sequenceDiagram
-    participant App
-    participant SagaLog
-    participant SagaResult
-
-    App->>+SagaLog: initialise()
-    SagaLog->>+SagaResult: configure()
-    SagaResult-->>-SagaLog: ready
-    App->>+SagaLog: run(context)
-    SagaLog->>+SagaResult: execute(context)
-    SagaResult-->>-SagaLog: result
-    SagaLog-->>-App: WorkflowResult
-```
-
-## Philosophy
-
-> The *Ramayana* is itself a saga of compensating transactions — every exile balanced by a return.
+MIT — use freely, build freely.
 
 ---
 
-*Part of the [arsenal](https://github.com/darshjme/arsenal) — production stack for LLM agents.*
+<div align="center">
 
-*Built by [Darshankumar Joshi](https://github.com/darshjme), Gujarat, India.*
+**Built with 🔮 by [Darshankumar Joshi](https://github.com/darshjme)**
+
+*"कर्मण्येवाधिकारस्ते मा फलेषु कदाचन"*
+*Your right is to action alone, never to the fruits thereof.*
+
+[Arsenal](https://github.com/darshjme/arsenal) · [GitHub](https://github.com/darshjme) · [Twitter](https://twitter.com/thedarshanjoshi)
+
+</div>
